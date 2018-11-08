@@ -3,40 +3,30 @@ import { uuid } from 'lib/common';
 export const CLOCK = Symbol('系统时钟');
 
 export default class Cell {
-  static load(data) {
-    //选取根节点 todo 考虑是否可以根据有无其他组件引用确定是否为根组件
-    const root = Object.values(data).find(d => d.type === 'ROOT');
-    return root.links.map(d => {
-      const c = data[d.component];
-      if (c.type === 'COMPONENT') {
-        return Cell.load(c);
-      }
-      return new Cell({
-        ...d,
-        ...c
-      })
-    });
-  }
-
-  static extendLinks(links) {
-    return links.reduce((p, n) => {
-      const c = data[n.component];
-      if (c.type === 'COMPONENT') {
-
-      } else {
-        p.push(n);
-      }
-    }, []);
-  }
-
   constructor(config) {
+    this.clock = 0;
+
+    if (config.from) {
+      const root = config.components[config.from];
+      this.body = root.links.map(d => {
+        const c = config.components[d.component];
+        if (c.type === 'COMPONENT') {
+          return new Cell({...config, from: d.component});
+        }
+        return new Cell({
+          ...d,
+          ...c
+        })
+      });
+      return;
+    }
+
     this.id = config.id || uuid();
     this.type = config.type;
     this.name = config.name;
     this.input = config.input || [];
-    this.body = this.setBody(config.body);
 
-    this.clock = 0;
+    eval(`this.body = ${config.body}`);
   }
 
   reset() {
@@ -54,16 +44,6 @@ export default class Cell {
 
   removeInput(idx) {
     this.input.splice(idx, 1);
-  }
-
-  setBody(body) {
-    if (!body) {
-      throw new Error('body不能为空');
-    } else if (typeof(body) === 'string') {
-      eval(`this.body = ${body}`);
-    } else if (typeof(body) === 'object') {
-      this.body = body;
-    }
   }
 
   output() {

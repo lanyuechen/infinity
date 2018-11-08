@@ -14,7 +14,15 @@ module.exports = {
   devtool: 'inline-source-map',
   devServer: {
     contentBase: './src',
-    host: '0.0.0.0'
+    host: '0.0.0.0',
+    proxy: {
+
+      '/rpc': {
+        target: 'https://dev.datahunter.cn',
+        secure: false,
+        changeOrigin: true
+      }
+    }
   },
   plugins: [
     new HtmlWebpackPlugin({

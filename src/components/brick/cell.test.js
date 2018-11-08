@@ -1,11 +1,11 @@
 import Cell, { CLOCK } from './cell';
 import demo from '../../public/data/demo.json';
 
-const cell = Cell.load(demo);
-
 describe('cell.js', () => {
+  const cell = new Cell(demo);
+
   it('test-1', () => {
-    console.log('===', 'test');
+    console.log('===', cell);
     expect(1).toBe(1);
   });
 });

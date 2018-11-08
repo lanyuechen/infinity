@@ -4,6 +4,10 @@ import ReactDOM from 'react-dom';
 class App extends Component {
   constructor(props) {
     super(props);
+
+    fetch('/rpc').then(res => {
+      console.log('==========', res)
+    });
   }
 
   render() {
