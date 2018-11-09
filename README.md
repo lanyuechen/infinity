@@ -1,5 +1,6 @@
-## js-view
-可视化js编辑器
+## infinity
+
+可视化组件编辑器
 
 ### 组件(Cell)
 
