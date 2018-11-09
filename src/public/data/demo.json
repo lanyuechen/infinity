@@ -37,17 +37,17 @@
     "c_source_0": {
       "type": "FUNCTION",
       "name": "S",
-      "body": "function () {\n    return (this.tick + 1) % 2\n}"
+      "body": "function () {\n    return (this.clock + 1) % 2\n}"
     },
     "c_source_1": {
       "type": "FUNCTION",
       "name": "R",
-      "body": "function () {\n    return (this.tick) % 2\n}"
+      "body": "function () {\n    return (this.clock) % 2\n}"
     },
     "c_view": {
-      "type": "VIEW",
+      "type": "FUNCTION",
       "name": "V(x)",
-      "body": "function () {}"
+      "body": "function (a) { return a;}"
     },
 
     "c_component_0": {

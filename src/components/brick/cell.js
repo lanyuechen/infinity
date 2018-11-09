@@ -9,6 +9,9 @@ export const CLOCK = Symbol('系统时钟');
  * name   组件名称
  * input  输入组件引用数组
  * body   组件体, type = COMPONENT 时 body为Cell实例数组; type = FUNCTION 时 body 为 function
+ * clock  组件时钟, 用来判断是否循环引用
+ * innerClock  组件内部用来判断是否循环引用
+ * lastData  上一次的输出值
  */
 export default class Cell {
   constructor(config) {
@@ -28,8 +31,7 @@ export default class Cell {
     this.type = root.type;
     this.name = root.name;
     this.input = config.input || [];
-
-    console.log('========', root.name, root.output)
+    this.out = root.output;
 
     this.body = root.links.map(d => {
       const c = config.components[d.component];
@@ -89,13 +91,39 @@ export default class Cell {
     this.input.splice(idx, 1);
   }
 
-  output() {
-    //如果当前模块计数大于全局计数,说明此模块处于循环调用,直接返回上次的值,防止死循环
-    if (this.clock < window[CLOCK]) {
-      this.clock += 1;
-      const func = this.func.bind({tick: window[CLOCK]});
-      this.lastData = func(...this.input.map(d => d.output()));
+  calc(out, ...args) {
+    const current = this.body.find(d => d.id === out);
+
+    if (!current) {
+      return args[this.input.findIndex(k => k === out)];
     }
+
+    if (current.innerClock >= window[CLOCK]) {
+      return current.lastData;
+    }
+
+    current.innerClock = window[CLOCK];
+    const args2 = current.input.map(key => this.calc(key, ...args));
+    return current.output(...args2);
+  }
+
+  output(...args) {
+    if (this.clock >= window[CLOCK]) {
+      console.log('[反馈]', `${this.name}(${args}) = ${this.lastData}`);
+      return this.lastData;
+    }
+
+    this.clock++;
+    if (this.type === 'COMPONENT') {
+      this.lastData = this.calc(this.out, ...args);
+      console.log('[组件]', `${this.name}(${args}) = ${this.lastData}`);
+      return this.lastData;
+    }
+
+    const func = this.body.bind({clock: window[CLOCK]});
+    this.lastData = func(...args);
+
+    console.log('[函数]', `${this.name}(${args}) = ${this.lastData}`);
     return this.lastData;
   }
 }
