@@ -15,32 +15,28 @@ module.exports = {
   devServer: {
     contentBase: './src',
     host: '0.0.0.0',
-    proxy: {
-
-      '/rpc': {
-        target: 'https://dev.datahunter.cn',
-        secure: false,
-        changeOrigin: true
-      }
-    }
+    historyApiFallback: true
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'Output Management',
+      inject: true,
       template: 'src/index.html'
     })
   ],
   externals: {
     "react": "React",
-    "react-dom": "ReactDOM"
+    "react-dom": "ReactDOM",
+    "react-router-dom": "react-router-dom",
+    "antd": "antd"
   },
   resolve: {
     extensions: ['.js'],
     alias: {
-      components: path.resolve(__dirname, 'src/components'),
+      '@': path.resolve(__dirname, 'src'),
       lib: path.resolve(__dirname, 'src/lib'),
-      option: path.resolve(__dirname, 'src/option'),
-      app: path.resolve(__dirname, 'src/app')
+      api: path.resolve(__dirname, 'src/api'),
+      components: path.resolve(__dirname, 'src/components'),
+      pages: path.resolve(__dirname, 'src/pages'),
     }
   },
   module: {

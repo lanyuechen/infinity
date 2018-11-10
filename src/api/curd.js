@@ -13,20 +13,22 @@ export default class Curd {
     this.data = JSON.parse(data);
   }
 
-  add(data) {
-    this.data.push({
+  async add(data) {
+    data = {
       ...data,
       _id: data._id || uuid()
-    });
+    };
+    this.data.push(data);
     localStorage[this.table] = JSON.stringify(this.data);
+    return data._id;
   }
 
-  remove(id) {
+  async remove(id) {
     this.data = this.data.filter(d => d._id !== id);
     localStorage[this.table] = JSON.stringify(this.data);
   }
 
-  update(id, data) {
+  async update(id, data) {
     this.data = this.data.map(d => {
       if (d._id === id) {
         return {
@@ -38,10 +40,14 @@ export default class Curd {
     localStorage[this.table] = JSON.stringify(this.data);
   }
 
-  find(id) {
+  async find(id) {
     if (id) {
       return this.data.filter(d => d._id === id);
     }
     return this.data;
+  }
+
+  async findOne(id) {
+    return await this.find(id).then(res => res[0]);
   }
 }
