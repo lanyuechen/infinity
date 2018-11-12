@@ -1,9 +1,6 @@
-import Cell, { CLOCK } from './cell';
-import * as Api from '../../api/index';
+import Cell, { CLOCK } from './index';
 
 import demo from '../../public/data/demo.json';
-
-Api.project.add({test:1});
 
 window[CLOCK] = 0;
 const cell = new Cell(demo);
