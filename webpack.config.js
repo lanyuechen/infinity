@@ -26,7 +26,7 @@ module.exports = {
   externals: {
     "react": "React",
     "react-dom": "ReactDOM",
-    "react-router-dom": "react-router-dom",
+    "react-router-dom": "ReactRouterDOM",
     "antd": "antd"
   },
   resolve: {
