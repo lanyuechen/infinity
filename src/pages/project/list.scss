@@ -10,11 +10,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: border-color .3s;
+    transition: color .3s, border-color .3s;
+    color: $C5;
     .iconfont {
       font-size: 48px;
-      color: $C5;
-      transition: color .3s, transform .3s;
+      transition: transform .3s;
     }
     .title {
       position: absolute;
@@ -40,13 +40,11 @@
     height: 20px;
     text-align: center;
     line-height: 20px;
-    .iconfont {
-      font-size: 12px;
-      color: $C3;
-      opacity: 0;
-      transition: opacity .3s;
-    }
-    &:hover .iconfont {
+    color: $C3;
+    font-size: 12px;
+    opacity: 0;
+    transition: opacity .3s, color .3s;
+    &:hover {
       color: $C4;
     }
   }
@@ -55,8 +53,8 @@
     &:hover {
       .item {
         border-color: $C3;
+        color: $C3;
         .iconfont {
-          color: $C3;
           transform: scale(1.1);
         }
         .title {
@@ -64,9 +62,7 @@
         }
       }
       .delete {
-        .iconfont {
-          opacity: 1;
-        }
+        opacity: 1;
       }
     }
   }
