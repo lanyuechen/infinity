@@ -62,8 +62,9 @@ export default class extends Component {
               <Card>
                 <NavLink className="item" to={`${match.path}/${d._id}`}>
                   <i className="iconfont icon-component" />
-                  <div className="title">
-                    {d.name}
+                  <div className="info">
+                    <h2>{d.name}</h2>
+                    <p>{d.desc}</p>
                   </div>
                 </NavLink>
                 <a className="delete" onClick={() => this.handleRemove(d._id)}>

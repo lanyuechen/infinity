@@ -16,19 +16,23 @@
       font-size: 48px;
       transition: transform .3s;
     }
-    .title {
+    .info {
       position: absolute;
       left: 0;
-      bottom: -20px;
-      height: 20px;
+      top: calc(100% - 30px);
+      height: 100%;
       width: 100%;
       font-size: 12px;
       line-height: 20px;
-      padding: 0 5px;
+      padding: 5px;
       color: $C4;
       border: 1px solid transparent;
       background: rgba(0, 0, 0, 0.2);
-      transition: bottom .3s;
+      transition: top .3s;
+      h2 {
+        font-size: 12px;
+        color: inherit;
+      }
     }
   }
   .delete {
@@ -57,8 +61,8 @@
         .iconfont {
           transform: scale(1.1);
         }
-        .title {
-          bottom: 0;
+        .info {
+          top: 0;
         }
       }
       .delete {
