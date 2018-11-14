@@ -52,14 +52,23 @@ export default class extends Component {
         <Row gutter={16}>
           <Col xs={12} sm={8} md={6} lg={4} xl={3}>
             <Card>
-              <a href="javascript:;" onClick={this.handleCreate}>创建</a>
+              <a className="item" onClick={this.handleCreate}>
+                <i className="iconfont icon-new" />
+              </a>
             </Card>
           </Col>
           {projects.map((d, i) => (
             <Col key={d._id} xs={12} sm={8} md={6} lg={4} xl={3}>
               <Card>
-                <NavLink to={`${match.path}/${d._id}`}>{d.name}</NavLink>
-                <a href="javascript:;" onClick={() => this.handleRemove(d._id)}>删除</a>
+                <NavLink className="item" to={`${match.path}/${d._id}`}>
+                  <i className="iconfont icon-component" />
+                  <div className="title">
+                    {d.name}
+                  </div>
+                </NavLink>
+                <a className="delete" onClick={() => this.handleRemove(d._id)}>
+                  <i className="iconfont icon-delete" />
+                </a>
               </Card>
             </Col>
           ))}

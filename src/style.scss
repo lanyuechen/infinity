@@ -1,3 +1,12 @@
+$C1: #17252a;
+$C2: #2b7a78;
+$C3: #3aafa9;
+$C4: #def2f1;
+$C5: #feffff;
+
+body {
+  background: $C1;
+}
 .pending {
   pointer-events: none;
   position: relative;
