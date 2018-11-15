@@ -3,14 +3,22 @@ import { NavLink } from 'react-router-dom';
 import { Row, Col } from 'antd';
 
 import Card from 'components/card';
+import Modal from 'components/modal';
+import Input from 'components/input';
+import Form from 'components/form';
 
 import './list.scss'
+
+function isMatch(value, query) {
+  return !query || new RegExp(query, 'i').test(value);
+}
 
 export default class extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      projects: []
+      projects: [],
+      query: ''
     }
   }
 
@@ -26,13 +34,30 @@ export default class extends Component {
     });
   };
 
-  handleCreate = async () => {
-    await API.project.add({
-      name: '新项目'
-    }).then(_id => {
-      const { match, history } = this.props;
-      history.push(`${match.path}/${_id}`);
+  handleCreateModal = () => {
+    const form = new Form({
+      children: [
+        <Input name="name" placeholder="名称" style={{marginBottom: 15}} />,
+        <Input name="desc" type="textarea" placeholder="简介" />
+      ]
     });
+    this.modalCreate = Modal.open({
+      title: '创建项目',
+      content: form.render(),
+      onOk: () => {
+        this.create(form.data);
+      }
+    })
+  };
+
+  create = async (param) => {
+    const _id = await API.project.add(param);
+
+    const { match, history } = this.props;
+    history.push(`${match.path}/${_id}`);
+
+    this.modalCreate.close();
+    this.modalCreate = null;
   };
 
   handleRemove = (id) => {
@@ -43,24 +68,36 @@ export default class extends Component {
     })
   };
 
+  handleSearch = (e) => {
+    this.setState({
+      query: e.target.value
+    });
+  };
+
   render() {
     const { match } = this.props;
-    const { projects } = this.state;
+    const { projects, query } = this.state;
 
     return (
       <div className="project-list">
+        <div className="search-bar">
+          <input onChange={this.handleSearch} type="text" placeholder="请输入要搜索的内容" />
+          <a className="search-btn">
+            <i className="iconfont icon-search" />
+          </a>
+        </div>
         <Row gutter={16}>
-          <Col xs={12} sm={8} md={6} lg={4} xl={3}>
+          <Col xs={12} sm={8} md={6} lg={6} xl={4}>
             <Card>
-              <a className="item" onClick={this.handleCreate}>
+              <a className="project-list-item" onClick={this.handleCreateModal}>
                 <i className="iconfont icon-new" />
               </a>
             </Card>
           </Col>
-          {projects.map((d, i) => (
-            <Col key={d._id} xs={12} sm={8} md={6} lg={4} xl={3}>
+          {projects.filter(d => isMatch(d.name, query)).map((d, i) => (
+            <Col key={d._id} xs={12} sm={8} md={6} lg={6} xl={4}>
               <Card>
-                <NavLink className="item" to={`${match.path}/${d._id}`}>
+                <NavLink className="project-list-item" to={`${match.path}/${d._id}`}>
                   <i className="iconfont icon-component" />
                   <div className="info">
                     <h2>{d.name}</h2>
