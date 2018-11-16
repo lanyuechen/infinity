@@ -3,15 +3,13 @@ import { NavLink } from 'react-router-dom';
 import { Row, Col } from 'antd';
 
 import Card from 'components/card';
-import Modal from 'components/modal';
 import Input from 'components/input';
 import FormModal from 'components/form-modal';
+import confirm from 'components/confirm';
+
+import { isMatch } from 'lib/common';
 
 import './list.scss'
-
-function isMatch(value, query) {
-  return !query || new RegExp(query, 'i').test(value);
-}
 
 export default class extends Component {
   constructor(props) {
@@ -30,7 +28,7 @@ export default class extends Component {
     API.project.find().then(res => {
       this.setState({
         projects: res
-      })
+      });
     });
   };
 
@@ -58,11 +56,18 @@ export default class extends Component {
   };
 
   handleRemove = (id) => {
-    API.project.remove(id).then(() => {
-      this.setState({
-        projects: this.state.projects.filter(d => d._id !== id)
-      });
-    })
+    const p = this.state.projects.find(d => d._id === id);
+    confirm({
+      title: '删除项目',
+      content: `确定吗删除项目[${p.name}]吗?`,
+      onOk: () => {
+        API.project.remove(id).then(() => {
+          this.setState({
+            projects: this.state.projects.filter(d => d._id !== id)
+          });
+        });
+      }
+    });
   };
 
   handleSearch = (e) => {

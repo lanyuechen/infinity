@@ -6,6 +6,11 @@ import Button from 'components/button';
 import './style.scss';
 
 export default class Modal extends Component {
+  static defaultProps = {
+    title: 'Modal',
+    width: 320
+  };
+
   static open(config) {
     const div = document.createElement('div');
     document.body.appendChild(div);
