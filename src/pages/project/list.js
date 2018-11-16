@@ -4,8 +4,8 @@ import { Row, Col } from 'antd';
 
 import Card from 'components/card';
 import Input from 'components/input';
-import FormModal from 'components/form-modal';
-import confirm from 'components/confirm';
+import FormModal from 'lib/form-modal';
+import confirm from 'lib/confirm';
 
 import { isMatch } from 'lib/common';
 
