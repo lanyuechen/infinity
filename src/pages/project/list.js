@@ -46,7 +46,12 @@ export default class extends Component {
   };
 
   create = async (param) => {
-    const _id = await API.project.add(param);
+    const _id = await API.project.add({
+      name: param.name,
+      desc: param.desc,
+      input: [],
+      links: []
+    });
 
     const { match, history } = this.props;
     history.push(`${match.path}/${_id}`);

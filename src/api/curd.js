@@ -1,4 +1,5 @@
 import { uuid } from '../lib/common';
+import update from 'immutability-helper';
 
 export default class Curd {
   constructor(table) {
@@ -28,26 +29,24 @@ export default class Curd {
     localStorage[this.table] = JSON.stringify(this.data);
   }
 
-  async update(id, data) {
+  async update(query, spec) {
     this.data = this.data.map(d => {
-      if (d._id === id) {
-        return {
-          ...d, ...data
-        }
+      if (Object.entries(query).every(([k, v]) => d[k] === v)) {
+        return update(d, spec);
       }
       return d;
     });
     localStorage[this.table] = JSON.stringify(this.data);
   }
 
-  async find(id) {
-    if (id) {
-      return this.data.filter(d => d._id === id);
+  async find(query) {
+    if (query) {
+      return this.data.filter(d => Object.entries(query).every(([k, v]) => d[k] === v));
     }
     return this.data;
   }
 
-  async findOne(id) {
-    return await this.find(id).then(res => res[0]);
+  async findOne(query) {
+    return await this.find(query).then(res => res[0]);
   }
 }

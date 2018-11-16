@@ -2,45 +2,80 @@ import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
 
 import { DragSource, DropTarget } from 'lib/dnd';
+import { uuid } from 'lib/common';
+import Cell from 'lib/cell';
+import Brick from './brick';
 
 import './detail.scss';
 
 export default class extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      project: null
-    };
   }
 
   componentDidMount() {
     this.update();
   }
 
-  update = () => {
+  update = async () => {
     const _id = this.props.match.params.id;
-    API.project.findOne(_id).then(res => {
-      this.setState({
-        project: res
-      })
-    });
+    const project = await API.project.findOne({_id});
+    const components = await API.component.find({pid: _id});
+
+    const json = {
+      from: _id,
+      components: {
+        [_id]: {
+          type: 'COMPONENT',
+          name: project.name,
+          desc: project.desc,
+          input: project.input || [],
+          output: project.output,
+          links: project.links || []
+        },
+        ...components.reduce((p, n) => {
+          p[n._id] = n;
+          return p;
+        }, {})
+      }
+    };
+
+    this.project = project;
+    this.cell = new Cell(json);
+
+    console.log('===', json, this.cell);
+
+    this.forceUpdate();
   };
 
-  handleDrop = (data, e) => {
+  handleDrop = async (data, e) => {
     const boundingRect = e.target.getBoundingClientRect();
     const x = e.pageX - boundingRect.x;
     const y = e.pageY - boundingRect.y;
 
-    console.log('===', x, y)
-    //if (data.type === TYPE_VIEW) {
-    //  this.modules.push(new View({x, y}));
-    //} else {
-    //  this.modules.push(new M({x, y}));
-    //}
+    console.log('===', x, y);
+    const _id = this.props.match.params.id;
+
+    const id = await API.component.add({
+      pid: _id,
+      type: data.type,
+      name: 'ƒ(x)',
+      x, y
+    });
+    await API.project.update({_id}, {
+      links: {
+        $push: [{
+          id: uuid(),
+          input: [],
+          component: id
+        }]
+      }
+    });
+
   };
 
   render() {
-    const { project } = this.state;
+    const { project, cell } = this;
     if (!project) {
       return null;
     }
@@ -89,7 +124,12 @@ export default class extends Component {
 
                 </g>
                 <g className="modules">
-
+                  {cell.body.map(d => (
+                    <Brick
+                      key={d.id}
+                      module={{x: d.x, y: d.y, width: 50, height: 50}}
+                    />
+                  ))}
                 </g>
               </svg>
             )}

@@ -28,10 +28,9 @@ export default class Cell {
     const root = config.components[config.from];
 
     this.id = config.id || uuid();
-    this.type = root.type;
-    this.name = root.name;
     this.input = config.input || [];
     this.out = root.output;
+    this.asignInfo(root);
 
     this.body = root.links.map(d => {
       const c = config.components[d.component];
@@ -67,11 +66,18 @@ export default class Cell {
 
   initBySimpleConfig(config) {
     this.id = config.id || uuid();
-    this.type = config.type;
-    this.name = config.name;
     this.input = config.input || [];
+    this.asignInfo(config);
 
     eval(`this.body = ${config.body}`);
+  }
+
+  asignInfo(config) {
+    this.type = config.type;
+    this.name = config.name;
+    this.desc = config.desc;
+    this.x = config.x;
+    this.y = config.y;
   }
 
   reset() {
