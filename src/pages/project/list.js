@@ -5,7 +5,7 @@ import { Row, Col } from 'antd';
 import Card from 'components/card';
 import Modal from 'components/modal';
 import Input from 'components/input';
-import Form from 'components/form';
+import FormModal from 'components/form-modal';
 
 import './list.scss'
 
@@ -35,19 +35,16 @@ export default class extends Component {
   };
 
   handleCreateModal = () => {
-    const form = new Form({
-      children: [
-        <Input name="name" placeholder="名称" style={{marginBottom: 15}} />,
-        <Input name="desc" type="textarea" placeholder="简介" />
-      ]
-    });
-    this.modalCreate = Modal.open({
+    this.modalCreate = new FormModal({
       title: '创建项目',
-      content: form.render(),
-      onOk: () => {
-        this.create(form.data);
+      content: [
+        <Input name="name" required placeholder="名称" style={{marginBottom: 15}} />,
+        <Input name="desc" type="textarea" placeholder="简介" />
+      ],
+      onOk: (data) => {
+        this.create(data);
       }
-    })
+    });
   };
 
   create = async (param) => {

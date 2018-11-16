@@ -21,6 +21,7 @@ export default class extends Component {
 
     return (
       <input
+        autocomplete="off"
         {...other}
         className={`infinity-input infinity-focus ${other.className || ''}`}
       />

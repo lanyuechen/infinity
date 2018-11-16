@@ -34,3 +34,8 @@ body {
     filter: brightness(1.2);
   }
 }
+
+input.infinity-err {
+  border-color: $ERR;
+  transition: border-color .3s;
+}
