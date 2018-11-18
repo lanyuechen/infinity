@@ -1,36 +1,21 @@
+@import '@/global.scss';
+
 .brick {
   .io-area {
     cursor: crosshair;
   }
-  .zoom-area {
-    rect {
-      &:nth-child(1) {
-        cursor: nw-resize;
-      }
-      &:nth-child(2) {
-        cursor: ne-resize;
-      }
-      &:nth-child(3) {
-        cursor: se-resize;
-      }
-      &:nth-child(4) {
-        cursor: sw-resize;
-      }
-    }
-  }
   rect {
-    fill: #fff;
-    stroke: #999;
+    fill: $C2;
+    box-shadow: rgba(0, 0, 0, 0.5);
+    stroke: $C3;
     stroke-width: 1px;
   }
   text {
-    fill: #666;
+    fill: $C4;
     text-anchor: middle;
     dominant-baseline: middle;
-    &:hover {
-      fill: #000
-    }&.output {
-      fill: red
+    &.output {
+      fill: $C4
     }
   }
 }
