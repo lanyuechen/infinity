@@ -316,6 +316,7 @@ export default class extends Component {
             {project.name}
           </div>
           <div className="tool-btns">
+            <Button>发布</Button>
             <Button onClick={this.run}>{this.interval ? '停止' : '运行'}</Button>
             <Button onClick={this.save}>保存</Button>
             <Button onClick={this.handleSaveComponent}>保存为组件</Button>
