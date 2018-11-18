@@ -7,6 +7,9 @@ export const CLOCK = Symbol('系统时钟');
  * id     组件id
  * type   组件类型(COMPONENT, FUNCTION)
  * name   组件名称
+ * desc   简介
+ * x      x坐标
+ * y      y坐标
  * input  输入组件引用数组
  * body   组件体, type = COMPONENT 时 body为Cell实例数组; type = FUNCTION 时 body 为 function
  * clock  组件时钟, 用来判断是否循环引用
@@ -30,7 +33,8 @@ export default class Cell {
     this.id = config.id || uuid();
     this.input = config.input || [];
     this.out = root.output;
-    this.asignInfo(root);
+    this.component = root.component;
+    this.asignInfo(this, root);
 
     this.body = root.links.map(d => {
       const c = config.components[d.component];
@@ -67,22 +71,27 @@ export default class Cell {
   initBySimpleConfig(config) {
     this.id = config.id || uuid();
     this.input = config.input || [];
-    this.asignInfo(config);
+    this.component = config.component;
+    this.asignInfo(this, config);
 
     eval(`this.body = ${config.body}`);
   }
 
-  asignInfo(config) {
-    this.type = config.type;
-    this.name = config.name;
-    this.desc = config.desc;
-    this.x = config.x;
-    this.y = config.y;
+  asignInfo(scope, config) {
+    scope.type = config.type;
+    scope.name = config.name;
+    scope.desc = config.desc;
+    scope.x = config.x;
+    scope.y = config.y;
   }
 
   reset() {
     this.clock = 0;
     this.lastData = undefined;
+  }
+
+  setFunc(func) {
+    eval(`this.body = ${func}`);
   }
 
   addInput(input) {
@@ -95,6 +104,42 @@ export default class Cell {
 
   removeInput(idx) {
     this.input.splice(idx, 1);
+  }
+
+  toJson() {
+    const components = {};
+    this.getComponents(components);
+    return {
+      from: this.id,
+      components
+    }
+  }
+
+  getComponents(components) {
+    components = components || {};
+    if (components[this.component || this.id]) {
+      return;
+    }
+    if (this.type === 'COMPONENT') {
+      components[this.component || this.id] = {
+        input: this.input,
+        output: this.out,
+        links: this.body.map(c => ({
+          id: c.id,
+          input: c.input,
+          component: c.component
+        }))
+      };
+      this.asignInfo(components[this.component || this.id], this);
+      this.body.map(d => {
+        d.getComponents(components);
+      });
+    } else {
+      components[this.component] = {
+        body: this.body && this.body.toString()
+      };
+      this.asignInfo(components[this.component], this);
+    }
   }
 
   calc(out, ...args) {

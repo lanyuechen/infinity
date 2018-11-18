@@ -22,6 +22,15 @@
         }
       }
     }
+    .tool-btns {
+      position: absolute;
+      right: 15px;
+      top: 7px;
+      font-size: 12px;
+      .infinity-btn {
+        margin-left: 15px;
+      }
+    }
   }
   .body {
     position: absolute;
@@ -88,5 +97,11 @@
         }
       }
     }
+  }
+}
+
+@keyframes offset {
+  to {
+    stroke-dashoffset: 0;
   }
 }

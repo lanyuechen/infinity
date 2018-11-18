@@ -53,14 +53,14 @@ export default class Modal extends Component {
   };
 
   render() {
-    const { children, width, title } = this.props;
+    const { children, width, height, title, className } = this.props;
 
     return (
-      <div className="modal" onClick={this.handleCancel}>
+      <div className={`modal ${className || ''}`} onClick={this.handleCancel}>
         <div
           className="modal-container"
           onClick={this.clearEvent}
-          style={{width}}
+          style={{width, height}}
         >
           <div className="modal-header">
             <h2 className="modal-title">{title}</h2>

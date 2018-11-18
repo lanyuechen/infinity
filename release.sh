@@ -8,3 +8,6 @@ webpack -p --progress --color
 
 # 复制静态资源目录
 cp -rf src/public dist/public
+
+# 复制favicon.ico
+cp src/favicon.ico dist/favicon.ico
