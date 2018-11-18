@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom';
 import { DragSource, DropTarget } from 'lib/dnd';
 import { uuid } from 'lib/common';
 import Cell, { CLOCK } from 'lib/cell';
-import popover from 'components/popover';
+import popover from 'lib/popover';
 import ContextMenu from 'components/context-menu';
 import Button from 'components/button';
 import Modal from 'components/modal';
