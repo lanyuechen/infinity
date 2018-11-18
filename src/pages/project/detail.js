@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
 
+import ContextMenu from 'components/context-menu';
+import Button from 'components/button';
+import Modal from 'components/modal';
+import Input from 'components/input';
+
 import { DragSource, DropTarget } from 'lib/dnd';
 import { uuid } from 'lib/common';
 import Cell, { CLOCK } from 'lib/cell';
 import popover from 'lib/popover';
-import ContextMenu from 'components/context-menu';
-import Button from 'components/button';
-import Modal from 'components/modal';
+import FormModal from 'lib/form-modal';
 
 import Editor from './editor';
 import Brick, { WIDTH, HEIGHT } from './brick';
@@ -28,7 +31,11 @@ export default class extends Component {
     const project = await API.project.findOne({_id});
 
     this.project = project;
+    console.log('---', project.config);
+
     this.cell = new Cell(project.config);
+
+    console.log('===', this.cell);
 
     this.forceUpdate();
   };
@@ -67,14 +74,31 @@ export default class extends Component {
     const x = e.pageX - boundingRect.x;
     const y = e.pageY - boundingRect.y;
 
-    await this.cell.body.push(new Cell({
-      id: uuid(),
-      input: [],
-      component: uuid(),
-      type: data.type,
-      name: 'ƒ(x)',
-      x, y
-    }));
+    if (data.data.id) {
+      const components = this.project.config.components;
+
+      await this.cell.body.push(new Cell({
+        components: {
+          ...components,
+          [data.data.id]: {
+            ...components[data.data.id],
+            component: data.data.id,
+            x, y
+          }
+        },
+        from: data.data.id
+      }));
+    } else {
+      await this.cell.body.push(new Cell({
+        id: uuid(),
+        input: [],
+        component: uuid(),
+        type: data.type,
+        name: 'ƒ(x)',
+        x, y
+      }));
+    }
+
     this.forceUpdate();
   };
 
@@ -228,11 +252,61 @@ export default class extends Component {
     });
   };
 
+  handleSaveComponent = () => {
+    this.modalSaveComponent = new FormModal({
+      title: '保存为组件',
+      content: [
+        <Input name="name" required placeholder="名称" style={{marginBottom: 15}} />,
+        <Input name="desc" type="textarea" placeholder="简介" />
+      ],
+      onOk: (param) => {
+        this.saveComponent(param);
+      }
+    });
+  };
+
+  saveComponent = (param) => {
+    const c = this.cell.toJson();
+    const old = c.components[c.from];
+    const from = uuid();
+
+    this.project.config = {
+      from,
+      components: {
+        ...c.components,
+        [c.from]: {
+          ...old,
+          output: this.cell.out,
+          name: param.name,
+          desc: param.desc
+        },
+        [from]: {
+          type: "COMPONENT",
+          name: this.project.name,
+          desc: this.project.desc,
+          input: [],
+          links: []
+        }
+      }
+    };
+
+    this.cell = new Cell(this.project.config);
+
+    this.modalSaveComponent.close();
+    this.modalSaveComponent = null;
+
+    this.forceUpdate();
+  };
+
   render() {
     const { project, cell } = this;
     if (!project) {
       return null;
     }
+
+    const components = Object.entries(project.config.components || {}).filter(d => {
+      return d[1].type === 'COMPONENT' && d[0] !== project.config.from;
+    });
 
     return (
       <div className="project-detail">
@@ -244,6 +318,7 @@ export default class extends Component {
           <div className="tool-btns">
             <Button onClick={this.run}>{this.interval ? '停止' : '运行'}</Button>
             <Button onClick={this.save}>保存</Button>
+            <Button onClick={this.handleSaveComponent}>保存为组件</Button>
           </div>
         </nav>
         <div className="body">
@@ -258,9 +333,9 @@ export default class extends Component {
             </div>
             <div>
               <h2>项目组件</h2>
-              {['AAA', 'BBB', 'CCC'].map(d => DragSource('COMPONENT', {})(
+              {components.map(([k, d]) => DragSource('COMPONENT', {id: k})(
                 <div className="brick-card infinity-hover">
-                  {d}
+                  {d.name}
                 </div>
               ))}
             </div>

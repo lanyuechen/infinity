@@ -34,7 +34,7 @@ export default class Cell {
     this.input = config.input || [];
     this.out = root.output;
     this.component = root.component;
-    this.asignInfo(this, root);
+    this.assignInfo(this, root);
 
     this.body = root.links.map(d => {
       const c = config.components[d.component];
@@ -48,7 +48,10 @@ export default class Cell {
             ...config.components,
             [d.component]: {
               ...c,
+              component: d.component,
               input: d.input,
+              x: d.x,
+              y: d.y,
               links: c.links.map(l => ({
                 ...l,
                 input: l.input.map((key, i) => cMap[key] || key)
@@ -72,12 +75,12 @@ export default class Cell {
     this.id = config.id || uuid();
     this.input = config.input || [];
     this.component = config.component;
-    this.asignInfo(this, config);
+    this.assignInfo(this, config);
 
     eval(`this.body = ${config.body}`);
   }
 
-  asignInfo(scope, config) {
+  assignInfo(scope, config) {
     scope.type = config.type;
     scope.name = config.name;
     scope.desc = config.desc;
@@ -102,10 +105,6 @@ export default class Cell {
     this.input.push(input);
   }
 
-  setInput(idx, input) {
-    this.input[idx] = input;
-  }
-
   removeInput(idx) {
     this.input.splice(idx, 1);
   }
@@ -128,21 +127,27 @@ export default class Cell {
       components[this.component || this.id] = {
         input: this.input,
         output: this.out,
+        type: this.type,
+        name: this.name,
+        desc: this.desc,
         links: this.body.map(c => ({
           id: c.id,
           input: c.input,
-          component: c.component
+          component: c.component,
+          x: c.x,
+          y: c.y
         }))
       };
-      this.asignInfo(components[this.component || this.id], this);
       this.body.map(d => {
         d.getComponents(components);
       });
     } else {
       components[this.component] = {
+        type: this.type,
+        name: this.name,
+        desc: this.desc,
         body: this.body && this.body.toString()
       };
-      this.asignInfo(components[this.component], this);
     }
   }
 
