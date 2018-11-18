@@ -88,6 +88,10 @@ export default class Cell {
   reset() {
     this.clock = 0;
     this.lastData = undefined;
+    this.innerClock = undefined;
+    if (this.type === 'COMPONENT') {
+      this.body.map(d => d.reset());
+    }
   }
 
   setFunc(func) {

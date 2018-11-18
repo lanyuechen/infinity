@@ -30,8 +30,6 @@ export default class extends Component {
     this.project = project;
     this.cell = new Cell(project.config);
 
-    console.log('===', project, this.cell);
-
     this.forceUpdate();
   };
 
@@ -147,7 +145,6 @@ export default class extends Component {
       onOk: () => {
         const txt = editor.getValue();
         cell.setFunc(txt);
-        console.log('====',cell)
         modal.close();
       }
     });
@@ -175,6 +172,7 @@ export default class extends Component {
         <ContextMenu
           data={[
             {name: '编辑', onClick: () => this.handleEdit(cell)},
+            {name: '设为输出', onClick: () => this.cell.out = cell.id},
             {name: '删除', onClick: handleRemove}
           ]}
         />
@@ -209,9 +207,11 @@ export default class extends Component {
     if (!this.interval) {
       this.save();
       window[CLOCK] = 0;
+      this.cell.reset();
       this.interval = setInterval(() => {
         window[CLOCK]++;
         console.log('== output ==', this.cell.output());
+        this.forceUpdate();
       }, 1000);
     } else {
       clearInterval(this.interval);
@@ -257,7 +257,7 @@ export default class extends Component {
               )}
             </div>
             <div>
-              <h2>自定义组件</h2>
+              <h2>项目组件</h2>
               {['AAA', 'BBB', 'CCC'].map(d => DragSource('COMPONENT', {})(
                 <div className="brick-card infinity-hover">
                   {d}
