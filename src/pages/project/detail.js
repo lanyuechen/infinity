@@ -280,6 +280,7 @@ export default class extends Component {
       const view = this.cell.body.find(d => d.type === 'VIEW');
       let inputs = [];
       if (view) {
+        this.refs.osc.style.bottom = 0;
         inputs = view.input.map(id => this.cell.body.find(d => d.id === id));
       }
 
@@ -295,6 +296,7 @@ export default class extends Component {
       }, window.INTERVAL || 1000);
     } else {
       clearInterval(this.interval);
+      this.refs.osc.style.bottom = '-200px';
       this.interval = null;
     }
     this.forceUpdate();
@@ -450,7 +452,9 @@ export default class extends Component {
                 </g>
               </svg>
             )}
-            <Osc data={view} xCount={100} />
+            <div className="view" ref="osc">
+              <Osc data={view} xCount={100} />
+            </div>
           </div>
         </div>
       </div>
