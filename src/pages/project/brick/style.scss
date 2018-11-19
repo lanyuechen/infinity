@@ -15,6 +15,7 @@
     text-anchor: middle;
     dominant-baseline: middle;
     &.output {
+      text-anchor: start;
       fill: $C4
     }
   }

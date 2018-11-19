@@ -27,7 +27,8 @@ module.exports = {
     "react": "React",
     "react-dom": "ReactDOM",
     "react-router-dom": "ReactRouterDOM",
-    "antd": "antd"
+    "antd": "antd",
+    "d3": "d3"
   },
   resolve: {
     extensions: ['.js'],

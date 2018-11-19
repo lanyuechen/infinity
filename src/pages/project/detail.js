@@ -15,12 +15,14 @@ import confirm from 'lib/confirm';
 
 import Editor from './editor';
 import Brick, { WIDTH, HEIGHT } from './brick';
+import Osc from './osc';
 
 import './detail.scss';
 
 export default class extends Component {
   constructor(props) {
     super(props);
+    this.view = [];
   }
 
   componentDidMount() {
@@ -35,11 +37,8 @@ export default class extends Component {
     this.publicComponents = publicComponents.filter(d => d._id !== _id);
 
     this.project = project;
-    console.log('---', project.config);
 
     this.cell = new Cell(project.config);
-
-    console.log('===', this.cell);
 
     this.forceUpdate();
   };
@@ -78,7 +77,7 @@ export default class extends Component {
     const x = e.pageX - boundingRect.x;
     const y = e.pageY - boundingRect.y;
 
-    if (data.data.id) {
+    if (data.type === 'COMPONENT') {
       const components = this.project.config.components;
 
       await this.cell.body.push(new Cell({
@@ -92,13 +91,22 @@ export default class extends Component {
         },
         from: data.data.id
       }));
-    } else {
+    } else if (data.type === 'FUNCTION') {
       await this.cell.body.push(new Cell({
         id: uuid(),
         input: [],
         component: uuid(),
         type: data.type,
         name: 'ƒ(x)',
+        x, y
+      }));
+    } else if (data.type === 'VIEW') {
+      await this.cell.body.push(new Cell({
+        id: uuid(),
+        input: [],
+        component: uuid(),
+        type: data.type,
+        name: 'V(x)',
         x, y
       }));
     }
@@ -267,11 +275,24 @@ export default class extends Component {
       this.save();
       window[CLOCK] = 0;
       this.cell.reset();
+
+      this.view = [];
+      const view = this.cell.body.find(d => d.type === 'VIEW');
+      let inputs = [];
+      if (view) {
+        inputs = view.input.map(id => this.cell.body.find(d => d.id === id));
+      }
+
       this.interval = setInterval(() => {
         window[CLOCK]++;
-        console.log('== output ==', this.cell.output());
+        this.cell.output();
+
+        if (view) {
+          this.view = [...this.view, view.output(...inputs)];
+        }
+
         this.forceUpdate();
-      }, 1000);
+      }, window.INTERVAL || 1000);
     } else {
       clearInterval(this.interval);
       this.interval = null;
@@ -334,7 +355,7 @@ export default class extends Component {
   };
 
   render() {
-    const { project, cell, publicComponents } = this;
+    const { project, cell, publicComponents, view } = this;
     if (!project) {
       return null;
     }
@@ -367,6 +388,11 @@ export default class extends Component {
                   ƒ(x)
                 </div>
               )}
+              {DragSource('VIEW', {})(
+                <div className="brick-card infinity-hover">
+                  V(x)
+                </div>
+              )}
             </div>
             <div>
               <h2>项目组件</h2>
@@ -386,7 +412,7 @@ export default class extends Component {
             </div>
           </div>
           <div className="content" ref="content">
-            {DropTarget(['FUNCTION', 'COMPONENT'], {
+            {DropTarget(['FUNCTION', 'COMPONENT', 'VIEW'], {
               onDrop: this.handleDrop
             })(
               <svg>
@@ -424,6 +450,7 @@ export default class extends Component {
                 </g>
               </svg>
             )}
+            <Osc data={view} xCount={100} />
           </div>
         </div>
       </div>

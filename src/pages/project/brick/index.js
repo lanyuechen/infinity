@@ -39,7 +39,7 @@ export default class Brick extends Component {
             {d.name}
           </text>
           <text className="output" x={WIDTH + 12} y={HEIGHT / 2 + 12}>
-            {d.lastData}
+            {d.lastData && d.lastData.toFixed(2)}
           </text>
         </g>
 

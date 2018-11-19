@@ -169,21 +169,23 @@ export default class Cell {
 
   output(...args) {
     if (this.clock >= window[CLOCK]) {
-      console.log('[反馈]', `${this.name}(${args}) = ${this.lastData}`);
+      log('[反馈]', `${this.name}(${args}) = ${this.lastData}`);
       return this.lastData;
     }
 
     this.clock++;
     if (this.type === 'COMPONENT') {
       this.lastData = this.calc(this.out, ...args);
-      console.log('[组件]', `${this.name}(${args}) = ${this.lastData}`);
+      log('[组件]', `${this.name}(${args}) = ${this.lastData}`);
       return this.lastData;
+    } else if (this.type === 'VIEW') {
+      return [this.clock, ...args.map(d => d.lastData)];
     }
 
     const func = this.body.bind({clock: window[CLOCK]});
     this.lastData = func(...args);
 
-    console.log('[函数]', `${this.name}(${args}) = ${this.lastData}`);
+    log('[函数]', `${this.name}(${args}) = ${this.lastData}`);
     return this.lastData;
   }
 }
