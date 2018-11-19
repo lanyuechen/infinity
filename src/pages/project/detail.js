@@ -11,6 +11,7 @@ import { uuid } from 'lib/common';
 import Cell, { CLOCK } from 'lib/cell';
 import popover from 'lib/popover';
 import FormModal from 'lib/form-modal';
+import confirm from 'lib/confirm';
 
 import Editor from './editor';
 import Brick, { WIDTH, HEIGHT } from './brick';
@@ -29,6 +30,9 @@ export default class extends Component {
   update = async () => {
     const _id = this.props.match.params.id;
     const project = await API.project.findOne({_id});
+    const publicComponents = await API.component.find();
+
+    this.publicComponents = publicComponents.filter(d => d._id !== _id);
 
     this.project = project;
     console.log('---', project.config);
@@ -227,6 +231,37 @@ export default class extends Component {
     });
   };
 
+  publish = () => {
+    confirm({
+      title: '发布项目',
+      content: `确定发布"${this.project.name}"吗?`,
+      onOk: () => {
+        API.component.add({
+          _id: this.props.match.params.id,
+          name: this.project.name,
+          desc: this.project.desc,
+          config: this.cell.toJson()
+        });
+      }
+    });
+  };
+
+  code = () => {
+    const modal = Modal.open({
+      title: 'Code',
+      width: '80%',
+      height: '80%',
+      content: (
+        <pre style={{height: '100%', overflow: 'auto', userSelect: 'text'}}>
+          {JSON.stringify(this.cell.toJson(), undefined, 2)}
+        </pre>
+      ),
+      onOk: () => {
+        modal.close();
+      }
+    });
+  };
+
   run = () => {
     if (!this.interval) {
       this.save();
@@ -299,7 +334,7 @@ export default class extends Component {
   };
 
   render() {
-    const { project, cell } = this;
+    const { project, cell, publicComponents } = this;
     if (!project) {
       return null;
     }
@@ -316,7 +351,8 @@ export default class extends Component {
             {project.name}
           </div>
           <div className="tool-btns">
-            <Button>发布</Button>
+            <Button onClick={this.publish}>发布</Button>
+            <Button onClick={this.code}>Code</Button>
             <Button onClick={this.run}>{this.interval ? '停止' : '运行'}</Button>
             <Button onClick={this.save}>保存</Button>
             <Button onClick={this.handleSaveComponent}>保存为组件</Button>
@@ -342,9 +378,9 @@ export default class extends Component {
             </div>
             <div>
               <h2>公共组件</h2>
-              {['111', '222', '333'].map(d => DragSource('COMPONENT', {})(
+              {publicComponents && publicComponents.map(d => DragSource('COMPONENT', {})(
                 <div className="brick-card infinity-hover">
-                  {d}
+                  {d.name}
                 </div>
               ))}
             </div>

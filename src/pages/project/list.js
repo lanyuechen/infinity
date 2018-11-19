@@ -75,7 +75,7 @@ export default class extends Component {
     const p = this.state.projects.find(d => d._id === id);
     confirm({
       title: '删除项目',
-      content: `确定吗删除"${p.name}"吗?`,
+      content: `确定删除"${p.name}"吗?`,
       onOk: () => {
         API.project.remove(id).then(() => {
           this.setState({
