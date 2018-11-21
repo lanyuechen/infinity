@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = {
   mode: 'development',
@@ -21,7 +22,8 @@ module.exports = {
     new HtmlWebpackPlugin({
       inject: true,
       template: 'src/index.html'
-    })
+    }),
+    new BundleAnalyzerPlugin()
   ],
   externals: {
     "react": "React",
