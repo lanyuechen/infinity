@@ -4,7 +4,7 @@
 rm -rf dist
 
 # js打包
-webpack -p --progress --color
+webpack -p --progress --color --mode production
 
 # 复制静态资源目录
 cp -rf src/public dist/public
