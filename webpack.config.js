@@ -2,7 +2,8 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");    //提取css到单独文件
+const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");    //解决MiniCssExtractPlugin导致的重复问题
 
 module.exports = (env, argv) => {
   const plugins = [
@@ -16,12 +17,12 @@ module.exports = (env, argv) => {
     })
   ];
 
-  if (!argv.mode) {   //非开发或生产环境,分析用
+  if (argv.mode !== 'production') {   //非开发或生产环境,分析用
     plugins.push(new BundleAnalyzerPlugin());
   }
 
   return {
-    mode: argv.mode,
+    mode: argv.mode || 'development',
     entry: {
       index: './src/index.js'
     },
@@ -35,6 +36,11 @@ module.exports = (env, argv) => {
       host: '0.0.0.0',
       historyApiFallback: true
     },
+    //optimization: {
+    //  minimizer: [
+    //    new OptimizeCSSAssetsPlugin({})
+    //  ]
+    //},
     plugins,
     externals: {
       "react": "React",
@@ -65,16 +71,14 @@ module.exports = (env, argv) => {
         {
           test: /\.css$/,
           use: [
-            'style-loader',
+            MiniCssExtractPlugin.loader,
             'css-loader'
           ]
         },
         {
           test: /\.scss$/,
           use: [
-            {
-              loader: MiniCssExtractPlugin.loader
-            },
+            MiniCssExtractPlugin.loader,
             'css-loader',
             'sass-loader'
           ]
