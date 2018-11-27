@@ -17,6 +17,14 @@ export const CLOCK = Symbol('系统时钟');
  * lastData  上一次的输出值
  */
 export default class Cell {
+  static assignInfo(scope, config) {
+    scope.type = config.type;
+    scope.name = config.name;
+    scope.desc = config.desc;
+    scope.x = config.x;
+    scope.y = config.y;
+  }
+
   constructor(config) {
     this.clock = 0;
 
@@ -30,11 +38,11 @@ export default class Cell {
   initByFullConfig(config) {
     const root = config.components[config.from];
 
-    this.id = config.id || uuid();
-    this.input = config.input || [];
+    this.id = root.id || uuid();
+    this.input = root.input || [];
     this.out = root.output;
     this.component = root.component;
-    this.assignInfo(this, root);
+    Cell.assignInfo(this, root);
 
     this.body = root.links.map(d => {
       const c = config.components[d.component];
@@ -48,19 +56,13 @@ export default class Cell {
             ...config.components,
             [d.component]: {
               ...c,
-              component: d.component,
-              input: d.input,
-              x: d.x,
-              y: d.y,
+              ...d,
               links: c.links.map(l => ({
                 ...l,
                 input: l.input.map((key, i) => cMap[key] || key)
               }))
             }
           },
-          id: d.id,
-          input: d.input,
-          output: c.output,
           from: d.component
         });
       }
@@ -75,17 +77,9 @@ export default class Cell {
     this.id = config.id || uuid();
     this.input = config.input || [];
     this.component = config.component;
-    this.assignInfo(this, config);
+    Cell.assignInfo(this, config);
 
     eval(`this.body = ${config.body}`);
-  }
-
-  assignInfo(scope, config) {
-    scope.type = config.type;
-    scope.name = config.name;
-    scope.desc = config.desc;
-    scope.x = config.x;
-    scope.y = config.y;
   }
 
   reset() {
@@ -116,6 +110,42 @@ export default class Cell {
       from: this.id,
       components
     }
+  }
+
+  //todo 验证正确性
+  collapse(param) {
+    const c = this.toJson();
+    const old = c.components[c.from];
+    const o = this.body.find(d => d.id === this.out);
+    const from = uuid();
+
+    const config = {
+      from,
+      components: {
+        ...c.components,
+        [c.from]: {
+          ...old,
+          output: this.out,
+          name: param.name,
+          desc: param.desc
+        },
+        [from]: {
+          type: "COMPONENT",
+          name: this.name,
+          desc: this.desc,
+          input: [],
+          links: [{
+            id: uuid(),
+            input: [],
+            component: c.from,
+            x: o.x,
+            y: o.y
+          }]
+        }
+      }
+    };
+    this.initByFullConfig(config);
+    return config;
   }
 
   getComponents(components) {

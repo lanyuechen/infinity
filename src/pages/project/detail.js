@@ -324,31 +324,7 @@ export default class extends Component {
   };
 
   saveComponent = (param) => {
-    const c = this.cell.toJson();
-    const old = c.components[c.from];
-    const from = uuid();
-
-    this.project.config = {
-      from,
-      components: {
-        ...c.components,
-        [c.from]: {
-          ...old,
-          output: this.cell.out,
-          name: param.name,
-          desc: param.desc
-        },
-        [from]: {
-          type: "COMPONENT",
-          name: this.project.name,
-          desc: this.project.desc,
-          input: [],
-          links: []
-        }
-      }
-    };
-
-    this.cell = new Cell(this.project.config);
+    this.project.config = this.cell.collapse(param);
 
     this.modalSaveComponent.close();
     this.modalSaveComponent = null;
