@@ -10,7 +10,7 @@ import './style.scss';
 
 window.API = API;
 window.log = function(...props) {
-  if (window.DEBUG) {
+  if (localStorage.DEBUG) {
     console.log(...props);
   }
 };

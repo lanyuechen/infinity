@@ -18,7 +18,7 @@ module.exports = (env, argv) => {
   ];
 
   if (argv.mode !== 'production') {   //非开发或生产环境,分析用
-    plugins.push(new BundleAnalyzerPlugin());
+    //plugins.push(new BundleAnalyzerPlugin());
   }
 
   return {
