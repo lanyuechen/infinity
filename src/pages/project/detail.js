@@ -23,6 +23,7 @@ export default class extends Component {
   constructor(props) {
     super(props);
     this.view = [];
+    this.history = [];
   }
 
   componentDidMount() {
@@ -39,6 +40,7 @@ export default class extends Component {
     this.project = project;
 
     this.cell = new Cell(project.config);
+    this.history.push(this.cell);
 
     this.forceUpdate();
   };
@@ -149,7 +151,6 @@ export default class extends Component {
         window.addEventListener('contextmenu', this.handleKeyPress);
       }
     } else {
-      const linkIdx = this.cell.body.findIndex(d => d.id === cell.id);
       cell.addInput(this.currentInput.id);
       this.clearTmpLink();
     }
@@ -169,6 +170,13 @@ export default class extends Component {
   };
 
   handleEdit = (cell) => {
+    if (cell.type === 'COMPONENT') {
+      this.history.push(cell);
+      this.cell = cell;
+      this.forceUpdate();
+      return;
+    }
+
     const editor = new Editor({
       children: cell.body && cell.body.toString()
     });
@@ -271,9 +279,7 @@ export default class extends Component {
   };
 
   run = () => {
-    console.log('+++++++++++', this.cell)
     if (!this.interval) {
-      this.save();
       window[CLOCK] = 0;
       this.cell.reset();
 
@@ -294,7 +300,7 @@ export default class extends Component {
         }
 
         this.forceUpdate();
-      }, window.INTERVAL || 1000);
+      }, localStorage.INTERVAL || 1000);
     } else {
       clearInterval(this.interval);
       this.refs.osc.style.bottom = '-200px';
@@ -306,7 +312,7 @@ export default class extends Component {
   save = () => {
     API.project.update({_id: this.props.match.params.id}, {
       $merge: {
-        config: this.cell.toJson()
+        config: this.history[0].toJson()
       }
     });
   };
@@ -325,11 +331,17 @@ export default class extends Component {
   };
 
   saveComponent = (param) => {
-    this.project.config = this.cell.collapse(param);
+    this.project.config = this.history[0].collapse(param);
 
     this.modalSaveComponent.close();
     this.modalSaveComponent = null;
 
+    this.forceUpdate();
+  };
+
+  handleHistory = (idx) => {
+    this.history.splice(idx + 1);
+    this.cell = this.history[idx];
     this.forceUpdate();
   };
 
@@ -347,8 +359,13 @@ export default class extends Component {
       <div className="project-detail">
         <nav>
           <div className="title">
-            <NavLink to="/project"><i className="iconfont icon-home" /></NavLink>&nbsp;/&nbsp;
-            {project.name}
+            <NavLink to="/project"><i className="iconfont icon-home" /></NavLink>
+            {this.history.map((d, i) => (
+              <span>
+                &nbsp;/&nbsp;
+                <a onClick={() => this.handleHistory(i)}>{d.name}</a>
+              </span>
+            ))}
           </div>
           <div className="tool-btns">
             <Button onClick={this.publish}>发布</Button>

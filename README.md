@@ -1,5 +1,3 @@
 ## INFINITY
 
-### Cell
-
-[cell](src/lib/cell/README.md)
+### [Cell](src/lib/cell/README.md)
