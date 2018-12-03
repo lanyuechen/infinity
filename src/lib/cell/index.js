@@ -2,20 +2,6 @@ import { uuid } from 'lib/common';
 
 export const CLOCK = Symbol('系统时钟');
 
-/**
- * Cell
- * id     组件id
- * type   组件类型(COMPONENT, FUNCTION)
- * name   组件名称
- * desc   简介
- * x      x坐标
- * y      y坐标
- * input  输入组件引用数组
- * body   组件体, type = COMPONENT 时 body为Cell实例数组; type = FUNCTION 时 body 为 function
- * clock  组件时钟, 用来判断是否循环引用
- * innerClock  组件内部用来判断是否循环引用
- * lastData  上一次的输出值
- */
 export default class Cell {
   static assignInfo(scope, config) {
     scope.type = config.type;
@@ -112,7 +98,6 @@ export default class Cell {
     }
   }
 
-  //todo 验证正确性
   collapse(param) {
     const c = this.toJson();
     const old = c.components[c.from];
@@ -150,7 +135,7 @@ export default class Cell {
 
   getComponents(components) {
     components = components || {};
-    if (components[this.component || this.id]) {
+    if (components[this.component || this.id]) {    //todo 去掉this.id
       return;
     }
     if (this.type === 'COMPONENT') {

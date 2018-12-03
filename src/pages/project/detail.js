@@ -271,6 +271,7 @@ export default class extends Component {
   };
 
   run = () => {
+    console.log('+++++++++++', this.cell)
     if (!this.interval) {
       this.save();
       window[CLOCK] = 0;

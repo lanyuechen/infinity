@@ -19,30 +19,6 @@
 ### Cell Json
 
 ```
-Cell{
-	id: uuid(),
-	input: [],
-	out: "3-1",
-	component: "3",
-	type: "COMPONENT",
-	name,desc,
-	x: undefined,
-	y: undefined,
-	body: [
-		Cell{
-
-		},
-		Cell{
-
-		},
-		Cell{
-
-		}
-	]
-}
-```
-
-```
 {
 	"from": "3",							//指针，指向根节点
 	"components": {						//组件列表，存储所有组件结构
