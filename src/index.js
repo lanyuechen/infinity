@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter, HashRouter, Switch, Route, Redirect } from 'react-router-dom';
+import { HashRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 
 import * as API from './api';
 import Home from './pages/home';
@@ -22,13 +22,13 @@ class App extends Component {
 
   render() {
     return (
-      <HashRouter>
+      <Router>
         <Switch>
           <Route exact path="/" component={Home} />
           <Route path="/project" component={Project} />
           <Redirect to="/" />
         </Switch>
-      </HashRouter>
+      </Router>
     );
   }
 }
