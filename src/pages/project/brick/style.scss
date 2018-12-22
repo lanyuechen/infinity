@@ -1,14 +1,9 @@
 @import '@/global.scss';
 
 .brick {
-  .io-area {
-    cursor: crosshair;
-  }
   rect {
     fill: $C2;
     box-shadow: rgba(0, 0, 0, 0.5);
-    stroke: $C3;
-    stroke-width: 1px;
   }
   text {
     fill: $C4;
@@ -18,5 +13,8 @@
       text-anchor: start;
       fill: $C4
     }
+  }
+  .io-area {
+    cursor: crosshair;
   }
 }

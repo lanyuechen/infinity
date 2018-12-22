@@ -2,5 +2,9 @@
   "SUM": "function(...args) {\n\treturn args.reduce((p, n) => p + n, 0);\n}",
   "MAX": "function(...args) {\n\treturn Math.max(...args);\n}",
   "MIN": "function(...args) {\n\treturn Math.min(...args);\n}",
-  "MULT": "function(...args) {\n\treturn args.reduce((p, n) => p * n, 1);\n}"
+  "MULT": "function(...args) {\n\treturn args.reduce((p, n) => p * n, 1);\n}",
+  "SIN": "function(step = 1) {\n\treturn Math.sin(this.clock * Math.PI / 180 * step);\n}",
+  "COS": "function(step = 1) {\n\treturn Math.cos(this.clock * Math.PI / 180 * step);\n}",
+  "TICK": "function() {\n\treturn this.clock;\n}",
+  "RAND": "function() {\n\treturn Math.random()}"
 }
