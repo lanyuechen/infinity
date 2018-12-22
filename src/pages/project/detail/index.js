@@ -14,6 +14,8 @@ import FormModal from 'lib/form-modal';
 import confirm from 'lib/confirm';
 import Editor from 'lib/editor';
 
+import COMPONENT_SPEC from 'config/component-spec.json';
+
 import Osc from '../osc';
 import ComponentEditor from '../editor';
 
@@ -45,42 +47,41 @@ export default class extends Component {
     this.forceUpdate();
   };
 
-  handleDrop = async (data, e) => {
+  handleDrop = async ({type, data}, e) => {
     const boundingRect = e.target.getBoundingClientRect();
     const x = e.pageX - boundingRect.x;
     const y = e.pageY - boundingRect.y;
 
-    if (data.type === 'COMPONENT') {
+    if (type === 'COMPONENT') {
       const components = this.project.config.components;
 
       await this.cell.body.push(new Cell({
         components: {
           ...components,
-          [data.data.id]: {
-            ...components[data.data.id],
-            component: data.data.id,
+          [data.id]: {
+            ...components[data.id],
+            component: data.id,
             x, y
           }
         },
-        from: data.data.id
+        from: data.id
       }));
-    } else if (data.type === 'FUNCTION') {
+    } else if (type === 'FUNCTION') {
       await this.cell.body.push(new Cell({
         id: uuid(),
         input: [],
         component: uuid(),
-        type: data.type,
-        name: 'ƒ(x)',
-        x, y
+        name: data.name || 'ƒ(x)',
+        body: data.body,
+        type, x, y
       }));
-    } else if (data.type === 'VIEW') {
+    } else if (type === 'VIEW') {
       await this.cell.body.push(new Cell({
         id: uuid(),
         input: [],
         component: uuid(),
-        type: data.type,
         name: 'V(x)',
-        x, y
+        type, x, y
       }));
     }
 
@@ -251,6 +252,10 @@ export default class extends Component {
   };
 
   handleSaveComponent = () => {
+    if (!this.history[0].out) {
+      alert('未指定输出：右键单击组件，选择“设为输出”');
+      return
+    }
     this.modalSaveComponent = new FormModal({
       title: '保存为组件',
       content: [
@@ -315,6 +320,11 @@ export default class extends Component {
                   V(x)
                 </div>
               )}
+              {Object.entries(COMPONENT_SPEC).map(([name, body]) => DragSource('FUNCTION', {name, body})(
+                <div key={name} className="brick-card infinity-hover">
+                  {name}
+                </div>
+              ))}
             </div>
             <div>
               <h2>项目组件</h2>

@@ -1,0 +1,6 @@
+{
+  "SUM": "function(...args) {\n\treturn args.reduce((p, n) => p + n, 0);\n}",
+  "MAX": "function(...args) {\n\treturn Math.max(...args);\n}",
+  "MIN": "function(...args) {\n\treturn Math.min(...args);\n}",
+  "MULT": "function(...args) {\n\treturn args.reduce((p, n) => p * n, 1);\n}"
+}
