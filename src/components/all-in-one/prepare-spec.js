@@ -10,7 +10,7 @@ function isObject(obj) {
  */
 export default function prepareSpec(obj, path, cb) {
   if (!isObject(obj)) {
-    return;
+    return obj;
   }
 
   Object.defineProperties(obj, {
