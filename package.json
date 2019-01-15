@@ -12,6 +12,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "arrietty": "git+https://github.com/lanyuechen/arrietty.git",
+    "arrietty-react": "git+https://github.com/lanyuechen/arrietty-react.git",
     "immutability-helper": "^2.8.1",
     "react": "^16.7.0"
   },
