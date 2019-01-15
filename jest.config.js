@@ -76,7 +76,9 @@ module.exports = {
     "^api(.*)$": "<rootDir>/src/api$1",
     "^components(.*)$": "<rootDir>/src/components$1",
     "^pages(.*)$": "<rootDir>/src/pages$1",
-    "^config(.*)$": "<rootDir>/src/config$1"
+    "^config(.*)$": "<rootDir>/src/config$1",
+
+    "\\.(css|scss)$": "identity-obj-proxy"
   },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
