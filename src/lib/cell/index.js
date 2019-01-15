@@ -184,14 +184,14 @@ export default class Cell {
 
   output(...args) {
     if (this.clock >= window[CLOCK]) {
-      log('[反馈]', `${this.name}(${args}) = ${this.lastData}`);
+      // console.log('[反馈]', `${this.name}(${args}) = ${this.lastData}`);
       return this.lastData;
     }
 
     this.clock++;
     if (this.type === 'COMPONENT') {
       this.lastData = this.calc(this.out, ...args);
-      log('[组件]', `${this.name}(${args}) = ${this.lastData}`);
+      // console.log('[组件]', `${this.name}(${args}) = ${this.lastData}`);
       return this.lastData;
     } else if (this.type === 'VIEW') {
       return [this.clock, ...args.map(d => d.lastData)];
@@ -200,7 +200,7 @@ export default class Cell {
     const func = this.body.bind({clock: window[CLOCK]});
     this.lastData = func(...args);
 
-    log('[函数]', `${this.name}(${args}) = ${this.lastData}`);
+    // console.log('[函数]', `${this.name}(${args}) = ${this.lastData}`);
     return this.lastData;
   }
 }

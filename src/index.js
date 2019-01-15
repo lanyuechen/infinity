@@ -9,11 +9,6 @@ import Project from './pages/project';
 import './style.scss';
 
 window.API = API;
-window.log = function(...props) {
-  if (localStorage.DEBUG) {
-    console.log(...props);
-  }
-};
 
 class App extends Component {
   constructor(props) {
